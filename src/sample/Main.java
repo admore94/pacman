@@ -24,7 +24,9 @@ public class Main extends Application {
         root.getChildren().add( canvas );
         GameManager gameManager = new GameManager(root);
 
-        gameManager.drawBoard();
+        gameManager.getRoot().getChildren().add(gameManager.getPacman());
+        gameManager.setScoreBoard(new Score(root));
+
 
         theScene.addEventHandler(KeyEvent.KEY_PRESSED, event -> gameManager.movePacman(event));
         theScene.addEventHandler(KeyEvent.KEY_RELEASED, event -> gameManager.stopPacman(event));
