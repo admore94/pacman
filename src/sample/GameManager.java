@@ -290,8 +290,7 @@ public class GameManager {
      */
     private AnimationTimer createAnimation(String direction) {
         double step = 5;
-        return new AnimationTimer()
-        {
+        return new AnimationTimer() {
             public void handle(long currentNanoTime)
             {
             switch (direction) {

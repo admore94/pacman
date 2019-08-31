@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage theStage) throws Exception{
+    public void start(Stage theStage) throws Exception {
 //        Parent root = FXMLLoader.load(getClass().getResource("pacman.fxml"));
         theStage.setTitle( "Pacman" );
 
