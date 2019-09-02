@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +18,7 @@ public class GameManager {
 
     private Pacman pacman;
     private Group root;
-    private Set<Cookie> cookieSet;
+    private ArrayList<Cookie> cookieSet;
     private Set<Ghost> ghosts;
     private AnimationTimer leftPacmanAnimation;
     private AnimationTimer rightPacmanAnimation;
@@ -29,6 +30,7 @@ public class GameManager {
     private Score scoreBoard;
     private boolean gameEnded;
     private int cookiesEaten;
+    private CollisionListener collisionListener;
 
     /**
      * Constructor
@@ -37,7 +39,7 @@ public class GameManager {
         this.root = root;
         this.maze = new Maze();
         this.pacman = new Pacman(2.5 * BarObstacle.THICKNESS, 2.5 * BarObstacle.THICKNESS);
-        this.cookieSet = new HashSet<>();
+        this.cookieSet = new ArrayList<>();
         this.ghosts = new HashSet<>();
         this.leftPacmanAnimation = this.createAnimation("left");
         this.rightPacmanAnimation = this.createAnimation("right");
@@ -46,12 +48,13 @@ public class GameManager {
         this.lifes = 3;
         this.score = 0;
         this.cookiesEaten = 0;
+        this.collisionListener = new CollisionListener(this);
     }
 
     /**
      * Set one life less
      */
-    private void lifeLost() {
+    public void lifeLost() {
         this.leftPacmanAnimation.stop();
         this.rightPacmanAnimation.stop();
         this.upPacmanAnimation.stop();
@@ -73,7 +76,7 @@ public class GameManager {
     /**
      * Ends the game
      */
-    private void endGame() {
+    public void endGame() {
         this.gameEnded = true;
         root.getChildren().remove(pacman);
         for (Ghost ghost : ghosts) {
@@ -339,52 +342,50 @@ public class GameManager {
         double pacmanRightEdge = pacmanCenterX + pacman.getRadius();
         double pacmanTopEdge = pacmanCenterY - pacman.getRadius();
         double pacmanBottomEdge = pacmanCenterY + pacman.getRadius();
-        for (Cookie cookie:cookieSet) {
-            double cookieCenterX = cookie.getCenterX();
-            double cookieCenterY = cookie.getCenterY();
-            double cookieLeftEdge = cookieCenterX - cookie.getRadius();
-            double cookieRightEdge = cookieCenterX + cookie.getRadius();
-            double cookieTopEdge = cookieCenterY - cookie.getRadius();
-            double cookieBottomEdge = cookieCenterY + cookie.getRadius();
+        //for (Cookie cookie:cookieSet) {
+        for(int i = 0; i < cookieSet.size(); i++ ) {
+            double cookieCenterX = cookieSet.get(i).getCenterX();
+            double cookieCenterY = cookieSet.get(i).getCenterY();
+            double cookieLeftEdge = cookieCenterX - cookieSet.get(i).getRadius();
+            double cookieRightEdge = cookieCenterX + cookieSet.get(i).getRadius();
+            double cookieTopEdge = cookieCenterY - cookieSet.get(i).getRadius();
+            double cookieBottomEdge = cookieCenterY + cookieSet.get(i).getRadius();
             if (axis.equals("x")) {
                 // pacman goes right
                 if ((cookieCenterY >= pacmanTopEdge && cookieCenterY <= pacmanBottomEdge) && (pacmanRightEdge >= cookieLeftEdge && pacmanRightEdge <= cookieRightEdge)) {
-                    if (cookie.isVisible()) {
-                        this.score += cookie.getValue();
-                        this.cookiesEaten++;
+                    if (cookieSet.get(i).isVisible()) {
+                        this.collisionListener.cookieCollision(true, i, false, false);
                     }
-                    cookie.hide();
+                    this.collisionListener.cookieCollision(false, i,false, false);
                 }
                 // pacman goes left
                 if ((cookieCenterY >= pacmanTopEdge && cookieCenterY <= pacmanBottomEdge) && (pacmanLeftEdge >= cookieLeftEdge && pacmanLeftEdge <= cookieRightEdge)) {
-                    if (cookie.isVisible()) {
-                        this.score += cookie.getValue();
-                        this.cookiesEaten++;
+                    if (cookieSet.get(i).isVisible()) {
+                        this.collisionListener.cookieCollision(true, i,false, false);
                     }
-                    cookie.hide();
+                    this.collisionListener.cookieCollision(false, i, false, false);
                 }
             } else {
                 // pacman goes up
                 if ((cookieCenterX >= pacmanLeftEdge && cookieCenterX <= pacmanRightEdge) && (pacmanBottomEdge >= cookieTopEdge && pacmanBottomEdge <= cookieBottomEdge)) {
-                    if (cookie.isVisible()) {
-                        this.score += cookie.getValue();
-                        this.cookiesEaten++;
+                    if (cookieSet.get(i).isVisible()) {
+                        this.collisionListener.cookieCollision(true, i, false, false);
                     }
-                    cookie.hide();
+                    this.collisionListener.cookieCollision(false, i, false, false);
                 }
                 // pacman goes down
                 if ((cookieCenterX >= pacmanLeftEdge && cookieCenterX <= pacmanRightEdge) && (pacmanTopEdge <= cookieBottomEdge && pacmanTopEdge >= cookieTopEdge)) {
-                    if (cookie.isVisible()) {
-                        this.score += cookie.getValue();
-                        this.cookiesEaten++;
+                    if (cookieSet.get(i).isVisible()) {
+                        this.collisionListener.cookieCollision(true, i, false, false);
                     }
-                    cookie.hide();
+                    this.collisionListener.cookieCollision(false, i, false, false);
                 }
             }
-            this.scoreBoard.score.setText("Score: " + this.score);
+            this.collisionListener.cookieCollision(false, -1, false, true);
             if (this.cookiesEaten == this.cookieSet.size()) {
-                this.endGame();
+                this.collisionListener.cookieCollision(false, -1, true, false);;
             }
+
         }
     }
 
@@ -405,10 +406,27 @@ public class GameManager {
             double ghostBottomEdge = ghost.getY() + ghost.getHeight();
             if ((pacmanLeftEdge <= ghostRightEdge && pacmanLeftEdge >= ghostLeftEdge) || (pacmanRightEdge >= ghostLeftEdge && pacmanRightEdge <= ghostRightEdge)) {
                 if ((pacmanTopEdge <= ghostBottomEdge && pacmanTopEdge >= ghostTopEdge) || (pacmanBottomEdge >= ghostTopEdge && pacmanBottomEdge <= ghostBottomEdge)) {
-                    lifeLost();
+                    this.collisionListener.ghostCollision();
                 }
             }
         }
     }
 
+    public void setScore() {
+        this.score += this.cookieSet.get(1).getValue();
+    }
+
+    public void setScoreBoard(){
+        this.scoreBoard.score.setText("Score: " + this.score);
+    }
+
+    public void cookiesEaten() {
+        this.cookiesEaten++;
+    }
+
+
+
+    public void hideCookie(int cookie){
+        this.cookieSet.get(cookie).hide();
+    }
 }
