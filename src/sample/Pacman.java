@@ -13,4 +13,5 @@ public class Pacman extends Circle {
         this.setRadius(25);
         this.setFill(Color.YELLOW);
     }
+
 }

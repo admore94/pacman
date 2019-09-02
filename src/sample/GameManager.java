@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,9 +16,8 @@ import java.util.Set;
 
 public class GameManager {
 
-    private Pacman pacman;
-    private Group root;
-    private Set<Cookie> cookieSet;
+
+
     private Set<Ghost> ghosts;
     private AnimationTimer leftPacmanAnimation;
     private AnimationTimer rightPacmanAnimation;
@@ -33,11 +33,8 @@ public class GameManager {
     /**
      * Constructor
      */
-    GameManager(Group root) {
-        this.root = root;
+    GameManager() {
         this.maze = new Maze();
-        this.pacman = new Pacman(2.5 * BarObstacle.THICKNESS, 2.5 * BarObstacle.THICKNESS);
-        this.cookieSet = new HashSet<>();
         this.ghosts = new HashSet<>();
         this.leftPacmanAnimation = this.createAnimation("left");
         this.rightPacmanAnimation = this.createAnimation("right");
@@ -59,8 +56,8 @@ public class GameManager {
         for (Ghost ghost : ghosts) {
             ghost.getAnimation().stop();
         }
-        this.pacman.setCenterX(2.5 * BarObstacle.THICKNESS);
-        this.pacman.setCenterY(2.5 * BarObstacle.THICKNESS);
+        SingletonPacman.getInstance().setCenterX(2.5 * BarObstacle.THICKNESS);
+        SingletonPacman.getInstance().setCenterY(2.5 * BarObstacle.THICKNESS);
         lifes--;
         score -= 10;
         this.scoreBoard.lifes.setText("Lifes: " + this.lifes);
@@ -75,18 +72,18 @@ public class GameManager {
      */
     private void endGame() {
         this.gameEnded = true;
-        root.getChildren().remove(pacman);
+        Root.getInstance().getChildren().remove(SingletonPacman.getInstance());
         for (Ghost ghost : ghosts) {
-            root.getChildren().remove(ghost);
+            Root.getInstance().getChildren().remove(ghost);
         }
-        javafx.scene.text.Text endGame = new javafx.scene.text.Text("Game Over, press ESC to restart");
+        Text endGame = new Text("Game Over, press ESC to restart");
         endGame.setX(BarObstacle.THICKNESS * 3);
         endGame.setY(BarObstacle.THICKNESS * 28);
         endGame.setFont(Font.font("Arial", 40));
         endGame.setFill(Color.ROYALBLUE);
-        root.getChildren().remove(this.scoreBoard.score);
-        root.getChildren().remove(this.scoreBoard.lifes);
-        root.getChildren().add(endGame);
+        Root.getInstance().getChildren().remove(this.scoreBoard.score);
+        Root.getInstance().getChildren().remove(this.scoreBoard.lifes);
+        Root.getInstance().getChildren().add(endGame);
     }
 
     /**
@@ -95,12 +92,12 @@ public class GameManager {
      */
     public void restartGame(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE && gameEnded) {
-            root.getChildren().clear();
-            this.cookieSet.clear();
+            Root.getInstance().getChildren().clear();
+            SingletonCookieSet.getInstance().clear();
             this.ghosts.clear();
             this.drawBoard();
-            this.pacman.setCenterX(2.5 * BarObstacle.THICKNESS);
-            this.pacman.setCenterY(2.5 * BarObstacle.THICKNESS);
+            SingletonPacman.getInstance().setCenterX(2.5 * BarObstacle.THICKNESS);
+            SingletonPacman.getInstance().setCenterY(2.5 * BarObstacle.THICKNESS);
             this.lifes = 3;
             this.score = 0;
             this.cookiesEaten = 0;
@@ -112,14 +109,14 @@ public class GameManager {
      * Draws the board of the game with the cookies and the Pacman
      */
     public void drawBoard() {
-        this.maze.CreateMaze(root);
+        this.maze.CreateMaze(Root.getInstance());
         // 1st line
         Integer skip[] = {5, 17};
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 2.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -128,8 +125,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 4.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -138,8 +135,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 6.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -148,8 +145,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2 * i) + 2.5) * BarObstacle.THICKNESS, 8.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -158,8 +155,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 10.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -168,8 +165,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 12.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -178,8 +175,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2 * i) + 2.5) * BarObstacle.THICKNESS, 14.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -188,8 +185,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2 * i) + 2.5) * BarObstacle.THICKNESS, 16.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -198,8 +195,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2 * i) + 2.5) * BarObstacle.THICKNESS, 18.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -208,8 +205,8 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2*i) + 2.5) * BarObstacle.THICKNESS, 20.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
 
@@ -218,14 +215,14 @@ public class GameManager {
         for (int i = 0; i < 23; i++) {
             if (!Arrays.asList(skip).contains(i)) {
                 Cookie cookie = new Cookie(((2 * i) + 2.5) * BarObstacle.THICKNESS, 22.5 * BarObstacle.THICKNESS);
-                this.cookieSet.add(cookie);
-                root.getChildren().add(cookie);
+                SingletonCookieSet.getInstance().add(cookie);
+                Root.getInstance().getChildren().add(cookie);
             }
         }
-        root.getChildren().add(this.pacman);
+        Root.getInstance().getChildren().add(SingletonPacman.getInstance());
         this.generateGhosts();
-        root.getChildren().addAll(this.ghosts);
-        this.scoreBoard = new Score(root);
+        Root.getInstance().getChildren().addAll(this.ghosts);
+        this.scoreBoard = new Score(Root.getInstance());
     }
 
     /**
@@ -295,30 +292,30 @@ public class GameManager {
             {
             switch (direction) {
                 case "left":
-                    if (!maze.isTouching(pacman.getCenterX() - pacman.getRadius(), pacman.getCenterY(), 15)) {
-                        pacman.setCenterX(pacman.getCenterX() - step);
-                        checkCookieCoalition(pacman, "x");
+                    if (!maze.isTouching(SingletonPacman.getInstance().getCenterX() - SingletonPacman.getInstance().getRadius(), SingletonPacman.getInstance().getCenterY(), 15)) {
+                        SingletonPacman.getInstance().setCenterX(SingletonPacman.getInstance().getCenterX() - step);
+                        checkCookieCoalition(SingletonPacman.getInstance(), "x");
                         checkGhostCoalition();
                     }
                     break;
                 case "right":
-                    if (!maze.isTouching(pacman.getCenterX() + pacman.getRadius(), pacman.getCenterY(), 15)) {
-                        pacman.setCenterX(pacman.getCenterX() + step);
-                        checkCookieCoalition(pacman, "x");
+                    if (!maze.isTouching(SingletonPacman.getInstance().getCenterX() + SingletonPacman.getInstance().getRadius(), SingletonPacman.getInstance().getCenterY(), 15)) {
+                        SingletonPacman.getInstance().setCenterX(SingletonPacman.getInstance().getCenterX() + step);
+                        checkCookieCoalition(SingletonPacman.getInstance(), "x");
                         checkGhostCoalition();
                     }
                     break;
                 case "up":
-                    if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() - pacman.getRadius(), 15)) {
-                        pacman.setCenterY(pacman.getCenterY() - step);
-                        checkCookieCoalition(pacman, "y");
+                    if (!maze.isTouching(SingletonPacman.getInstance().getCenterX(), SingletonPacman.getInstance().getCenterY() - SingletonPacman.getInstance().getRadius(), 15)) {
+                        SingletonPacman.getInstance().setCenterY(SingletonPacman.getInstance().getCenterY() - step);
+                        checkCookieCoalition(SingletonPacman.getInstance(), "y");
                         checkGhostCoalition();
                     }
                     break;
                 case "down":
-                   if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() + pacman.getRadius(), 15)) {
-                       pacman.setCenterY(pacman.getCenterY() + step);
-                       checkCookieCoalition(pacman, "y");
+                   if (!maze.isTouching(SingletonPacman.getInstance().getCenterX(), SingletonPacman.getInstance().getCenterY() + SingletonPacman.getInstance().getRadius(), 15)) {
+                       SingletonPacman.getInstance().setCenterY(SingletonPacman.getInstance().getCenterY() + step);
+                       checkCookieCoalition(SingletonPacman.getInstance(), "y");
                        checkGhostCoalition();
                    }
                    break;
@@ -339,7 +336,7 @@ public class GameManager {
         double pacmanRightEdge = pacmanCenterX + pacman.getRadius();
         double pacmanTopEdge = pacmanCenterY - pacman.getRadius();
         double pacmanBottomEdge = pacmanCenterY + pacman.getRadius();
-        for (Cookie cookie:cookieSet) {
+        for (Cookie cookie:SingletonCookieSet.getInstance()) {
             double cookieCenterX = cookie.getCenterX();
             double cookieCenterY = cookie.getCenterY();
             double cookieLeftEdge = cookieCenterX - cookie.getRadius();
@@ -382,7 +379,7 @@ public class GameManager {
                 }
             }
             this.scoreBoard.score.setText("Score: " + this.score);
-            if (this.cookiesEaten == this.cookieSet.size()) {
+            if (this.cookiesEaten == SingletonCookieSet.getInstance().size()) {
                 this.endGame();
             }
         }
@@ -392,12 +389,12 @@ public class GameManager {
      * Checks if pacman is touching a ghost
      */
     public void checkGhostCoalition() {
-        double pacmanCenterY = pacman.getCenterY();
-        double pacmanCenterX = pacman.getCenterX();
-        double pacmanLeftEdge = pacmanCenterX - pacman.getRadius();
-        double pacmanRightEdge = pacmanCenterX + pacman.getRadius();
-        double pacmanTopEdge = pacmanCenterY - pacman.getRadius();
-        double pacmanBottomEdge = pacmanCenterY + pacman.getRadius();
+        double pacmanCenterY = SingletonPacman.getInstance().getCenterY();
+        double pacmanCenterX = SingletonPacman.getInstance().getCenterX();
+        double pacmanLeftEdge = pacmanCenterX - SingletonPacman.getInstance().getRadius();
+        double pacmanRightEdge = pacmanCenterX + SingletonPacman.getInstance().getRadius();
+        double pacmanTopEdge = pacmanCenterY - SingletonPacman.getInstance().getRadius();
+        double pacmanBottomEdge = pacmanCenterY + SingletonPacman.getInstance().getRadius();
         for (Ghost ghost : ghosts) {
             double ghostLeftEdge = ghost.getX();
             double ghostRightEdge = ghost.getX() + ghost.getWidth();
