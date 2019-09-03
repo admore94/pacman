@@ -2,7 +2,8 @@ package sample;
 
 import javafx.scene.Group;
 
-public class Root {
+public class SingletonGroup {
+
     private static Group Instance;
 
     public static Group getInstance() {

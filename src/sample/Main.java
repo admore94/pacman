@@ -16,7 +16,7 @@ public class Main extends Application {
 //        Parent root = FXMLLoader.load(getClass().getResource("pacman.fxml"));
         theStage.setTitle( "Pacman" );
 
-        Group root = Root.getInstance();
+        Group root = SingletonGroup.getInstance();
         Scene theScene = new Scene( root );
         theStage.setScene( theScene );
 
