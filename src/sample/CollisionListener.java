@@ -17,7 +17,7 @@ public class CollisionListener {
         }
         if (endgame) {
             this.gameManager.endGame();
-        }git
+        }
         if (score) {
             this.gameManager.setScoreBoard();
         }
