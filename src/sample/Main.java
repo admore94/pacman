@@ -16,12 +16,12 @@ public class Main extends Application {
 //        Parent root = FXMLLoader.load(getClass().getResource("pacman.fxml"));
         theStage.setTitle( "Pacman" );
 
-        Group root = SingletonGroup.getInstance();
-        Scene theScene = new Scene( root );
-        theStage.setScene( theScene );
+        
+        Scene theScene = new Scene(SingletonGroup.getInstance());
+        theStage.setScene(theScene);
 
         Canvas canvas = new Canvas( 1225, 600 );
-        root.getChildren().add( canvas );
+        SingletonGroup.getInstance().getChildren().add(canvas);
         GameManager gameManager = new GameManager();
 
         gameManager.drawBoard();
